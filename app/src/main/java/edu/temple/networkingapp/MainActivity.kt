@@ -8,14 +8,20 @@ import android.os.Message
 import android.util.Log
 import android.webkit.WebView
 import android.widget.TextView
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var webView: WebView
 
+    lateinit var requestQueue: RequestQueue
+
     val downloadHandler = Handler(Looper.getMainLooper()) {
-        webView.loadDataWithBaseURL("", it.obj.toString(), "text/html", "utf-8", null)
+
         true
     }
 
@@ -23,7 +29,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        requestQueue = Volley.newRequestQueue(this)
+
         webView = findViewById(R.id.webView)
+
+
+        requestQueue.add(
+            StringRequest(Request.Method.GET, "https://www.temple.edu", {
+                webView.loadDataWithBaseURL("", it, "text/html", "utf-8", null)
+            }, {})
+        )
+
+
+
+        /*
         Thread {
             val url = URL("https://www.temple.edu")
 
@@ -39,6 +58,8 @@ class MainActivity : AppCompatActivity() {
 
                 }
         }.start()
+
+         */
     }
 
 }
