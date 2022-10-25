@@ -4,16 +4,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.util.Log
+import android.webkit.WebView
 import android.widget.TextView
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var textView:TextView
+    lateinit var webView: WebView
 
     val downloadHandler = Handler(Looper.getMainLooper()) {
-        textView.text = it.obj.toString()
+        webView.loadDataWithBaseURL("", it.obj.toString(), "text/html", "utf-8", null)
         true
     }
 
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        textView = findViewById(R.id.textView)
+        webView = findViewById(R.id.webView)
         Thread {
             val url = URL("https://www.temple.edu")
 
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity() {
                             it != null
                         });
 
-                    Log.d("Website", strBuilder.toString())
+                    downloadHandler.sendMessage(Message.obtain().apply { obj = strBuilder.toString() })
+
                 }
         }.start()
     }
